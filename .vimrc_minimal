@@ -6,7 +6,7 @@ set number
 
 """ statusline
 set laststatus=2    " always show the statusline
-set statusline=%<\ %f\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\ "
+set statusline=%<\ %F\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\ "
 
 " E492 Not an editor command
 ca Q q 
