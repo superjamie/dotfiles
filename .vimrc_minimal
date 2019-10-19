@@ -1,0 +1,26 @@
+syntax on
+set expandtab
+set hlsearch
+set modeline
+set number
+
+""" statusline
+set laststatus=2    " always show the statusline
+set statusline=%<\ %f\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\ "
+
+" E492 Not an editor command
+ca Q q 
+ca W w 
+
+" disable mouse
+autocmd BufEnter * set mouse=
+" remove highlights
+nnoremap <leader>h :nohl<CR>:match none<CR>:call clearmatches()<CR> :<Esc>
+" toggle line numbers
+nnoremap <leader>n :set number!<CR>:set number?<CR>
+" toggle paste mode
+nnoremap <leader>p :set paste!<CR>:set paste?<CR>
+" toggle relative line numbers
+nnoremap <leader>r :set relativenumber!<CR>:set relativenumber?<CR>
+" reload config
+nnoremap <leader>v :source ~/.vimrc<CR>
