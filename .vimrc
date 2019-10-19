@@ -29,11 +29,12 @@ set softtabstop=4   " when halfway thru spacing and hit tab, end at 4 space gaps
 set laststatus=2    " always show the statusline
 "OLD set statusline=%<\ %f\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\
 
+" filetypes
 autocmd BufNewFile,BufReadPost *.ino set filetype=c    " arduino
-autocmd FileType c setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
-autocmd FileType cpp setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
+autocmd FileType c    setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
+autocmd FileType cpp  setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
 autocmd FileType diff setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
-autocmd FileType xml setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType xml  setlocal   expandtab tabstop=2 shiftwidth=2 softtabstop=2
 
 """ key remaps
 
@@ -61,8 +62,6 @@ ca W w
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 
-" look for lines over 80 characters
-nnoremap <leader>8 :call matchadd('Search', '\%80v.\+', 100)<CR> :<Esc>
 " remove highlights
 nnoremap <leader>h :nohl<CR>:match none<CR>:call clearmatches()<CR> :<Esc>
 " toggle list characters
@@ -73,11 +72,10 @@ nnoremap <leader>m :make<CR>
 nnoremap <leader>n :set number!<CR>:set number?<CR>
 " toggle paste mode
 " set pastetoggle=<leader>p
-" paste from clipboard
 nnoremap <Leader>p :set paste!<CR>
 " toggle relative line numbers
 nnoremap <leader>r :set relativenumber!<CR>:set relativenumber?<CR>
-" reload the config
+" reload config
 nnoremap <leader>v :source ~/.vimrc<CR>
 
 " markdown bold current word
@@ -87,6 +85,21 @@ nnoremap <leader>i :s/\(<c-r>=expand("<cword>")<cr>\)/*&*/<CR>:nohl<CR>
 
 """ plugins
 " bundle / lightline vim-colors-solarized vim-fugitive vim-markdown vim-surround
+
+" gtags-cscope.vim
+if has("cscope")
+    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+    let GtagsCscope_Auto_Load = 1
+    let GtagsCscope_Auto_Map = 1
+    let GtagsCscope_Quiet = 1
+endif
 
 " markdown - https://github.com/plasticboy/vim-markdown
 let g:vim_markdown_folding_disabled = 1
@@ -103,18 +116,3 @@ augroup reload_vimrc
     autocmd!
     autocmd bufwritepost $MYVIMRC nested source $MYVIMRC
 augroup END
-
-" plugin / gtags-cscope.vim
-if has("cscope")
-    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-    let GtagsCscope_Auto_Load = 1
-    let GtagsCscope_Auto_Map = 1
-    let GtagsCscope_Quiet = 1
-endif
