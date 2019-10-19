@@ -25,9 +25,9 @@ set tabstop=4       " consider 4 spaces to be a tab
 set shiftwidth=4    " when < or > shifting, move to 4-space boundaries
 set softtabstop=4   " when halfway thru spacing and hit tab, end at 4 space gaps
 
-""" statusline
+""" statusline - if not using lightline/airline
 set laststatus=2    " always show the statusline
-"OLD set statusline=%<\ %f\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\
+"set statusline=%<\ %F\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\ "
 
 " filetypes
 autocmd BufNewFile,BufReadPost *.ino set filetype=c    " arduino
@@ -35,6 +35,11 @@ autocmd FileType c    setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
 autocmd FileType cpp  setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
 autocmd FileType diff setlocal noexpandtab tabstop=8 shiftwidth=8 softtabstop=8
 autocmd FileType xml  setlocal   expandtab tabstop=2 shiftwidth=2 softtabstop=2
+
+" disable mouse
+autocmd BufEnter * set mouse=
+" change dir to current file on load
+"autocmd BufEnter * silent! lcd %:p:h
 
 """ key remaps
 
