@@ -108,6 +108,7 @@ endif
 
 " markdown - https://github.com/plasticboy/vim-markdown
 let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_new_list_item_indent = 0
 
 " solarized color scheme - http://ethanschoonover.com/solarized
 let g:solarized_contrast = "high" " default value is normal
