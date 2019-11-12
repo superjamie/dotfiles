@@ -53,6 +53,18 @@ inoremap <Down> <NOP>
 inoremap <Left> <NOP>
 inoremap <Right> <NOP>
 
+" fix ctrl+arrow keys under tmux
+map <ESC>[1;5D <C-Left>
+map <ESC>[1;5C <C-Right>
+map! <ESC>[1;5D <C-Left>
+map! <ESC>[1;5C <C-Right>
+" buffer navigation
+noremap <C-Left> :bprev<CR>
+noremap <C-Right> :bnext<CR>
+" vim-buftabline suggests
+nnoremap <C-N> :bnext<CR>
+nnoremap <C-P> :bprev<CR>
+
 " brad's graphical copypaste - requires xclip
 com! -range Xc :silent :<line1>,<line2>w !xclip -selection clipboard -i
 ca xc Xc
@@ -62,10 +74,6 @@ ca xp Xp
 " E492 Not an editor command
 ca Q q
 ca W w
-
-" vim-buftabline suggests
-nnoremap <C-N> :bnext<CR>
-nnoremap <C-P> :bprev<CR>
 
 " remove highlights
 nnoremap <leader>h :nohl<CR>:match none<CR>:call clearmatches()<CR> :<Esc>
