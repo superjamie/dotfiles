@@ -39,8 +39,10 @@ alias dns-flush='sudo systemd-resolve --flush-caches'
 alias ll='ls -AlF'
 alias ips='watch -n 0.5 ip addr'
 alias muteunmute='pactl set-sink-mute 0 toggle'
+alias newtags='rm -f GPATH GRTAGS GSYMS GTAGS; gtags'
 alias pkg='sudo apt'
 alias vms='sudo virsh list --all'
+alias webserve='python3 -m http.server' # formerly 'python -m SimpleHTTPServer'
 alias ytup='sudo -H pip3 install --upgrade youtube-dl'
 
 ## Functions
