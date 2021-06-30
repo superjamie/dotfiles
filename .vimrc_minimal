@@ -1,8 +1,10 @@
 syntax on
-set expandtab
+set autoindent
+set hidden
 set hlsearch
 set modeline
 set number
+set wildmenu
 
 """ statusline
 set laststatus=2    " always show the statusline
@@ -11,6 +13,9 @@ set statusline=%<\ %F\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\ "
 " E492 Not an editor command
 ca Q q 
 ca W w 
+
+map q: <Nop>     " disable command history
+nnoremap Q <nop> " disable Ex mode
 
 " disable mouse
 autocmd BufEnter * set mouse=
@@ -22,5 +27,3 @@ nnoremap <leader>n :set number!<CR>:set number?<CR>
 nnoremap <leader>p :set paste!<CR>:set paste?<CR>
 " toggle relative line numbers
 nnoremap <leader>r :set relativenumber!<CR>:set relativenumber?<CR>
-" reload config
-nnoremap <leader>v :source ~/.vimrc<CR>
