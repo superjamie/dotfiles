@@ -8,7 +8,7 @@ set wildmenu
 
 """ statusline
 set laststatus=2    " always show the statusline
-set statusline=%<\ %F\ %h%m%r%y\ (buf\ %n)%=(%p%%)\ col:%c\ ln:%l/%L\ "
+set statusline=%<[%n]\ %t\ %h%m%r%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&ft}\ \ %3p%%\ %4l:%-2c\ "
 
 " E492 Not an editor command
 ca Q q 
