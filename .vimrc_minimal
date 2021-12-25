@@ -1,14 +1,19 @@
 syntax on
-set autoindent
-set hidden
-set hlsearch
-set modeline
-set number
+set autoindent      " indent the same amount as the previous line on CR
+set backspace=indent,eol,start " allow backspacing over things
+set hidden          " allow moving to another buffer without saving
+set hlsearch        " highlight search results
+set listchars=tab:→\ ,eol:↲,space:·,trail:·" set list characters to be similar to TextMate
+set modeline        " enable modelines
+set number          " show line numbers
+set scrolloff=1     " number of lines to keep visible when scrolling
+set splitbelow      " start splits below the current window
+set splitright      " start splits to the right of the current window
 set wildmenu
 
 """ statusline
 set laststatus=2    " always show the statusline
-set statusline=%<[%n]\ %t\ %h%m%r%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&ft}\ \ %3p%%\ %4l:%-2c\ "
+set statusline=%<[%n]\ %t\ %h%m%r%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&ft}\ \|\ %2p%%\ \|\ %4l:%-2c\ "
 
 " E492 Not an editor command
 ca Q q 
@@ -27,3 +32,7 @@ nnoremap <leader>n :set number!<CR>:set number?<CR>
 nnoremap <leader>p :set paste!<CR>:set paste?<CR>
 " toggle relative line numbers
 nnoremap <leader>r :set relativenumber!<CR>:set relativenumber?<CR>
+
+" buffer nav
+noremap <C-h> :bprev<CR>
+noremap <C-l> :bnext<CR>
