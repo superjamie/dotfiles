@@ -13,7 +13,7 @@ set wildmenu
 
 """ statusline
 set laststatus=2    " always show the statusline
-set statusline=%<[%n]\ %t\ %h%m%r%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&ft}\ \|\ %2p%%\ \|\ %4l:%-2c\ "
+set statusline=%<[%n]\ %t\ %h%m%r%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&ft}\ \|\ %2p%%\ \|\ %4l:%-2v\ "
 
 " E492 Not an editor command
 ca Q q 
