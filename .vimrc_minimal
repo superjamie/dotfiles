@@ -3,10 +3,13 @@ set autoindent      " indent the same amount as the previous line on CR
 set backspace=indent,eol,start " allow backspacing over things
 set hidden          " allow moving to another buffer without saving
 set hlsearch        " highlight search results
-set listchars=tab:→\ ,eol:↲,space:·,trail:·" set list characters to be similar to TextMate
+set incsearch       " search as you type
+set linebreak       " don't wrap text in the middle of a word
+set listchars=tab:>\ ,eol:$,trail:-,extends:>,precedes:<,nbsp:+ " from vim-sensible
 set modeline        " enable modelines
 set number          " show line numbers
 set scrolloff=1     " number of lines to keep visible when scrolling
+set smartindent     " smart C indenting
 set splitbelow      " start splits below the current window
 set splitright      " start splits to the right of the current window
 set wildmenu
@@ -26,12 +29,16 @@ nnoremap Q <nop> " disable Ex mode
 autocmd BufEnter * set mouse=
 " remove highlights
 nnoremap <leader>h :nohl<CR>:match none<CR>:call clearmatches()<CR> :<Esc>
+" toggle list characters
+nnoremap <leader>l :set list!<CR>:set list?<CR>
 " toggle line numbers
 nnoremap <leader>n :set number!<CR>:set number?<CR>
 " toggle paste mode
 nnoremap <leader>p :set paste!<CR>:set paste?<CR>
 " toggle relative line numbers
 nnoremap <leader>r :set relativenumber!<CR>:set relativenumber?<CR>
+" remove trailing whitespace through whole document
+nnoremap <leader>w :%s/\s\+$//<CR>:match<CR>:nohl<CR> :<Esc>
 
 " buffer nav
 noremap <C-h> :bprev<CR>
