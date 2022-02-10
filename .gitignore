@@ -1,0 +1,18 @@
+# ctags
+tags
+
+# GNU Global tags
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
+# cscope tags
+cscope.out
+cscope.in.out
+cscope.po.out
+
+# vim swap files
+*.swp
+*.swo
+
