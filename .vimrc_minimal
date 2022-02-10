@@ -1,15 +1,14 @@
 syntax on
 set autoindent      " indent the same amount as the previous line on CR
-set backspace=indent,eol,start " allow backspacing over things
 set hidden          " allow moving to another buffer without saving
 set hlsearch        " highlight search results
-set incsearch       " search as you type
+set incsearch       " incremental search as you type
 set linebreak       " don't wrap text in the middle of a word
-set listchars=tab:>\ ,eol:$,trail:-,extends:>,precedes:<,nbsp:+ " from vim-sensible
+set listchars=tab:>\ ,eol:$,trail:-,extends:>,precedes:<,nbsp:+ " based on vim-sensible
 set modeline        " enable modelines
 set number          " show line numbers
 set scrolloff=1     " number of lines to keep visible when scrolling
-set smartindent     " smart C indenting
+set smartindent     " intelligent C indenting
 set splitbelow      " start splits below the current window
 set splitright      " start splits to the right of the current window
 set wildmenu
@@ -19,8 +18,8 @@ set laststatus=2    " always show the statusline
 set statusline=%<[%n]\ %t\ %h%m%r%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&ft}\ \|\ %2p%%\ \|\ %4l:%-2v\ "
 
 " E492 Not an editor command
-ca Q q 
-ca W w 
+ca Q q
+command W w
 
 map q: <Nop>     " disable command history
 nnoremap Q <nop> " disable Ex mode

@@ -207,7 +207,7 @@ nnoremap <leader>l :set list!<CR>:set list?<CR>
 " toggle line numbers
 nnoremap <leader>n :set number!<CR>:set number?<CR>
 " toggle paste mode
-nnoremap <Leader>p :set paste!<CR>
+nnoremap <leader>p :set paste!<CR>:set paste?<CR>
 " toggle relative line numbers
 nnoremap <leader>r :set relativenumber!<CR>:set relativenumber?<CR>
 " remove trailing whitespace
