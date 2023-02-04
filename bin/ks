@@ -1,0 +1,25 @@
+#!/bin/bash
+# ks - displays duplicate kernels for removal
+# sudo apt remove $(ks)
+# sudo yum remove $(ks)
+
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    if [[ "$ID" == "ubuntu" || "$ID" == "debian" || "$ID" == "linuxmint" ]]; then
+        FULL=$(sudo apt list --installed 2>/dev/null | awk -F'/' '/^linux.*(header|image|module)/{print $1}' | sort)
+        CURR=$(uname -r | sed -e 's/-generic//g')
+        KERN=$(echo "$FULL" | grep -E -v "$CURR|linux-(image|headers)-generic")
+    elif [[ "$ID" == "centos" || "$ID" == "rhel" || "$ID" == "fedora" ]]; then
+        FULL=$(sudo rpm -qa | grep -E "^kernel" | sort)
+        CURR=$(uname -r | sed -e 's/.x86_64//g')
+        KERN=$(echo "$FULL" | grep -E -v "$CURR")
+    fi
+
+    if [[ "$1" == "-a" || "$1" == "--all" ]]; then
+        echo "$FULL"
+    elif [[ -n "$KERN" ]]; then
+        echo "$KERN"
+    fi
+fi
+
+# vim: ts=4:sw=4
