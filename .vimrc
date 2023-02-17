@@ -1,11 +1,9 @@
-""" vimrc v2023-01-25
+""" vimrc v2023-02-18 - https://superjamie.github.io/
 " should work in NeoVim 0.8+ and Vim (recent-ish v8 or last v7 maybe?)
-" https://superjamie.github.io/
 syntax on
 filetype plugin indent on
 
-""" theme
-" https://github.com/altercation/vim-colors-solarized
+""" theme - https://github.com/altercation/vim-colors-solarized
 set background=dark
 let g:solarized_italic = 0
 let g:solarized_bold = 0
@@ -28,7 +26,7 @@ set number           " show line numbers
 set relativenumber   " enable hybrid line numbers
 set scrolloff=1      " number of lines to keep visible when scrolling
 set title            " show title in console
-set smarttab         " tab on blank line inserts a shiftwidth, backspc deletes
+set smarttab         " tab on blank line inserts a shiftwidth, backspace deletes
 set splitbelow       " start splits below the current window
 set splitright       " start splits to the right of the current window
 set wildmenu         " command autocompletion menu (try :color <Tab> to see)
@@ -36,10 +34,13 @@ set wildmenu         " command autocompletion menu (try :color <Tab> to see)
 set expandtab        " expand tabs to spaces
 set tabstop=4        " consider 4 spaces to be a tab
 set shiftwidth=4     " when < or > shifting, move to 4-space boundaries
-if has('softtabstop')
-    set softtabstop=-1   " when halfway thru spacing and you hit tab, end at
-    " 4-space gaps (-1 means use value of shiftwidth)
-endif
+" when halfway thru spacing and you hit tab, end at (shiftwidth) gaps
+if has('softtabstop') | set softtabstop=-1 | endif
+
+" put ~backups .swp .un~ in /tmp/%full%file%path instead of current directory
+set backupdir=/tmp//
+set directory=/tmp//
+set undodir=/tmp//
 
 """ neovim
 " use system clipboard for all yank/delete/change/put operations
@@ -49,38 +50,7 @@ else
     set clipboard=unnamed
 endif
 
-""" statusline
-set laststatus=2    " always show the statusline
-set showmode        " show mode line ---INSERT---
-" initialise to blank
-set statusline=
-" space, buffer number surrounded by [square braces]
-set statusline+=\ [%n]
-" space, filename (tail)
-set statusline+=\ %t
-" space, flags: modified, readonly, help, preview
-set statusline+=\ %m%r%h%w
-" right align
-set statusline+=%=
-" file format (line endings)
-set statusline+=%{&ff}
-" space, pipe, space, file encoding
-set statusline+=\ \:\ %{''.(&fenc!=''?&fenc:&enc).''}
-" space, pipe, space, filetype
-set statusline+=\ \:\ %{&ft}
-" space, pipe, space, min-3-width percent through file in lines
-set statusline+=\ \:\ %2p%%
-" space, pipe, space, min-4-width line number
-set statusline+=\ \:\ %3l
-" colon, min-2-character left-aligned virtual column number, space
-set statusline+=:%-2v\ "
-
-" put ~backups .swp .un~ in /tmp/%full%file%path instead of current directory
-set backupdir=/tmp//
-set directory=/tmp//
-set undodir=/tmp//
-
-""" filetypes
+""" filetypes and autogroups
 augroup configs
     autocmd!
     autocmd BufNewFile,BufReadPost *.ino set filetype=c  " arduino
@@ -92,44 +62,43 @@ augroup configs
     autocmd FileType xml   setlocal   expandtab tabstop=2 shiftwidth=2 softtabstop=2
 augroup END
 
-" When editing a file, always jump to the last known cursor position.
-" Don't do it when the position is invalid, when inside an event handler
-" (happens when dropping a file on gvim) and for a commit message (it's
-" likely a different one than last time).
-autocmd BufReadPost *
+augroup jump_to_this_files_last_cursor_position
+    autocmd!
+    " exclude invalid, event handler, and commit messages
+    autocmd BufReadPost *
             \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
             \ |   exe "normal! g`\""
             \ | endif
+augroup END
 
-" https://github.com/itchyny/lightline.vim/issues/102
-" You should always be using the nested flag for autocmd when sourcing your vimrc file
+" use nested when sourcing vimrc - https://github.com/itchyny/lightline.vim/issues/102
 augroup reload_vimrc
     autocmd!
     autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
 augroup END
 
-" disable mouse
-"autocmd BufEnter * set mouse=
+""" key remaps
+"" buffers
+noremap <silent> <leader>b :buffers<cr>
+" close current buffer without closing split, switches to b# (previous buffer)
+nnoremap <silent> <leader>d :b#<bar>bd#<CR>
+" from vim-unimpaired
+noremap [b :bprev<CR>
+noremap ]b :bnext<CR>
+noremap [B :bfirst<CR>
+noremap ]B :blast<CR>
 
-""" remaps
-" fix ctrl+arrow keys under tmux
-map! <ESC>[1;5D <C-Left>
-map! <ESC>[1;5C <C-Right>
-map! <ESC>[1;5A <C-Up>
-" buffer nav
-noremap <C-Left> :bprev<CR>
-noremap <C-Right> :bnext<CR>
-noremap <C-h> :bprev<CR>
-noremap <C-l> :bnext<CR>
-" exit terminal buffer insert mode with double-Esc
-tnoremap <Esc><Esc> <C-\><C-n>
+"" exit :terminal buffer insert mode with Esc
+tnoremap <Esc> <C-\><C-n>
 
-" E492 Not an editor command
+"" quickfix list
+noremap ]q :cnext<cr>
+noremap [q :cprev<cr>
+"" E492 Not an editor command
 command Q q
 command W w
-
-" disable command history (q:) and Ex mode (Q)
-map q: <Nop>
+"" disable command history (q:) and Ex mode (Q)
+nnoremap q: <Nop>
 nnoremap Q <Nop>
 
 """ functions
@@ -142,40 +111,44 @@ endfunction
 " toggle right margin column visual aid
 function! ColorColumn()
     if exists('+colorcolumn')
-        if &colorcolumn != 80
-            set colorcolumn=80,100,120
+        if &colorcolumn != 81
+            set colorcolumn=81,101,121
         else
             set colorcolumn=0
         endif
     else
-        " highlight lines over 80 characters in red
+        " fallback - highlight lines over 80 characters in red
         nnoremap <leader>8 :call matchadd('Search', '\%80v.\+', 100)<CR>:<Esc>
     endif
 endfunction
 
 """ leader maps
 " look for lines over 80 characters
-nnoremap <leader>8 :call ColorColumn()<CR>
+nnoremap <silent> <leader>8 :call ColorColumn()<CR>
 " highlight cursor position
-nnoremap <leader>c :set cursorline!<CR>:set cursorcolumn!<CR>:<Esc>
-" close current buffer without closing split, switches to b# (previous buffer)
-nnoremap <leader>d :b#<bar>bd#<CR>
-" remove highlights
-nnoremap <leader>h :nohl<CR>:match none<CR>:call clearmatches()<CR>:<Esc>
+nnoremap <silent> <leader>c :set cursorline!<CR>:set cursorcolumn!<CR>
+" remove search highlights by clearing last search pattern
+"nnoremap <silent> <leader>h :nohl<CR>:match none<CR>:call clearmatches()<CR>
+nnoremap <silent> <leader>h :let @/ = ""<cr>
 " toggle list characters
 nnoremap <leader>l :set list!<CR>:set list?<CR>
 " toggle line numbers
-nnoremap <leader>n :set relativenumber!<CR>:set number!<CR>:<Esc>
+nnoremap <leader>n :set relativenumber!<CR>:set number!<CR>
 " toggle relative line numbers
-nnoremap <leader><leader> :set relativenumber!<CR>:<Esc>
+nnoremap <silent> <leader><leader> :set relativenumber!<CR>
 " toggle paste mode
 nnoremap <Leader>p :set paste!<CR>:set paste?<CR>
+" close quickfix list
+nnoremap <leader>q :ccl<CR>
 " spell check
 nnoremap <leader>s :setlocal spell! spelllang=en_au<CR>:set spell?<CR>
+" open terminal in split
+nnoremap <leader>t :sp +term<cr>
+nnoremap <leader>T :vsp +term<cr>
+" reload vim config, repply filetype to the current file so 'augroup Filetype' runs again
+nnoremap <silent> <leader>v :source ~/.vimrc<CR>:exe ':set filetype='.&filetype<CR>
 " remove trailing whitespace, return cursor to current position
-nnoremap <leader>t :call Tw()<cr>:match none<CR>:call clearmatches()<CR>:<Esc>
-" reload vim config
-nnoremap <leader>v :source ~/.vimrc<CR>
+nnoremap <silent> <leader>w :call Tw()<cr>:match none<CR>:call clearmatches()<CR>
 " re-indent whole file (mm creates mark m, gg=G indents, `m goes to mark m)
 map <Leader>= mmgg=G`m
 
@@ -184,9 +157,10 @@ map <Leader>= mmgg=G`m
 " https://github.com/altercation/vim-colors-solarized
 " https://github.com/justinmk/vim-sneak
 "" nice to have
-" https://github.com/ervandew/supertab - turns tab into Ctrl+n completion key
+" https://github.com/superjamie/zeroline.vim - my basic statusline
+" https://github.com/ervandew/supertab - turns tab into completion key
 " https://github.com/ap/vim-buftabline - view buffers in the tabline
-" https://github.com/tpope/vim-fugitive - git integration, mostly :Git blame
+" https://github.com/tpope/vim-fugitive - git integration as :Git or :G
 " https://github.com/jeffkreeftmeijer/vim-numbertoggle - smart relative/absolute line numbers
 " https://github.com/bronson/vim-trailing-whitespace - highlights trailing whitespace in red
 "" optional
@@ -204,10 +178,11 @@ map <Leader>= mmgg=G`m
 " https://github.com/preservim/vim-markdown
 
 """ plugin settings
-" https://github.com/justinmk/vim-sneak
+"" https://github.com/justinmk/vim-sneak
 let g:sneak#label = 1
+highlight Sneak cterm=none ctermfg=White ctermbg=DarkMagenta
 
-" https://github.com/ap/vim-buftabline
+"" https://github.com/ap/vim-buftabline
 let g:buftabline_numbers = 1  " 0 = off. 1 = buffer number. 2 = ordinal number
 " better look with solarized
 if &background ==# "dark"
@@ -222,7 +197,7 @@ else
     hi BufTabLineFill    cterm=none ctermfg=Yellow ctermbg=none
 endif
 
-" gtags-cscope
+"" gtags-cscope
 if has("cscope")
     " regenerate gtags
     function! Retag()
@@ -230,54 +205,115 @@ if has("cscope")
         :cs reset
     endfunction
     nnoremap <leader>r :call Retag()<CR>
+    nmap <leader>G :cs add GTAGS<CR>
     let GtagsCscope_Auto_Load = 1
     let GtagsCscope_Auto_Map = 1
     let GtagsCscope_Quiet = 1
-    nmap <leader>G :cs add GTAGS<CR>
-    " vertical split mappings
-    nmap <C-s>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-s>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-s>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-s>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-s>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-s>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-s>i :vert scs find i <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-s>a :vert scs find a <C-R>=expand("<cword>")<CR><CR>
 endif
 
-" markdown - https://github.com/preservim/vim-markdown
+"" markdown - https://github.com/preservim/vim-markdown
 let g:vim_markdown_auto_insert_bullets = 1   " maybe set 0
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_italics_disabled = 1
 let g:vim_markdown_new_list_item_indent = 0
 
-" https://github.com/takac/vim-hardtime
+"" https://github.com/takac/vim-hardtime
 let g:hardtime_maxcount = 3
 let g:hardtime_default_on = 1
 
-""" testing
-" https://stackoverflow.com/a/53930943/1422582
-" Toggle signcolumn. Works on vim>=8.1 or NeoVim
-function! ToggleSignColumn()
-    if !exists("b:signcolumn_on") || b:signcolumn_on
-        set signcolumn=no
-        let b:signcolumn_on=0
-    else
-        set signcolumn=yes
-        let b:signcolumn_on=1
-    endif
+"" vim-lsp
+"" https://github.com/MaskRay/ccls/wiki/vim-lsp
+if executable('ccls')
+    augroup lsp_ccls
+        autocmd!
+        autocmd User lsp_setup call lsp#register_server({
+                    \ 'name': 'ccls',
+                    \ 'cmd': {server_info->['ccls']},
+                    \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
+                    \ 'initialization_options': {'cache': {'directory': expand('~/.cache/ccls') }},
+                    \ 'allowlist': ['c', 'cpp'],
+                    \ })
+        autocmd FileType c setlocal omnifunc=lsp#complete
+        autocmd FileType cpp setlocal omnifunc=lsp#complete
+    augroup end
+endif
+
+"" https://jonasdevlieghere.com/vim-lsp-clangd/
+"if executable('clangd')
+"    augroup lsp_clangd
+"        autocmd!
+"        autocmd User lsp_setup call lsp#register_server({
+"                    \ 'name': 'clangd',
+"                    \ 'cmd': {server_info->['clangd']},
+"                    \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
+"                    \ 'allowlist': ['c', 'cpp'],
+"                    \ 'initialization_options': {'cache': {'directory': expand('~/.cache/clangd') }},
+"                    \ })
+"        autocmd FileType c setlocal omnifunc=lsp#complete
+"        autocmd FileType cpp setlocal omnifunc=lsp#complete
+"    augroup end
+"endif
+
+" https://github.com/prabirshrestha/vim-lsp
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=no
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>R <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    "" changed
+    nnoremap <buffer> <expr><c-k> lsp#scroll(+4)
+    nnoremap <buffer> <expr><c-j> lsp#scroll(-4)
+    "" added
+    nmap <buffer> <f2> <plug>(lsp-rename)
+    let g:lsp_diagnostics_highlights_delay = 50
+    let g:lsp_diagnostics_signs_enabled = 0
+    let g:lsp_document_code_action_signs_enabled = 0
+    let g:lsp_document_highlight_delay = 50  "highlight symbol under cursor
+    let g:lsp_format_sync_timeout = 1000
+    let g:lsp_inlay_hints_enabled = 0
+    let g:lsp_fold_enabled = 0
+    let g:lsp_semantic_enabled = 0
+    if exists("loaded_supertab") | call SuperTabSetDefaultCompletionType("<c-x><c-o>") | endif
 endfunction
 
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+"""testing
+"" debug what syntax highlight is applied under the cursor
+function! SynGroup()
+    let l:s = synID(line('.'), col('.'), 1)
+    echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
+endfun
+nnoremap <f12> :call SynGroup()<CR>
+" https://github.com/luochen1990/rainbow#troubleshooting
+nnoremap <f8> :echo synIDattr(synID(line('.'), col('.'), 0), 'name')<cr>
+nnoremap <f9> :echo ("hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">")<cr>
+nnoremap <f10> :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
+nnoremap <f11> :exec 'syn list '.synIDattr(synID(line('.'), col('.'), 0), 'name')<cr>
+
+"" https://github.com/luochen1990/rainbow
+let g:rainbow_active = 1
+let g:rainbow_conf = { 'ctermfgs': [33, 166, 75, 141] }
+" defaults
+" 'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+" 'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+
 """ legacy
-" unmap arrow keys
-noremap! <Up> <NOP>
-noremap! <Down> <NOP>
-noremap! <Left> <NOP>
-noremap! <Right> <NOP>
-inoremap <Up> <NOP>
-inoremap <Down> <NOP>
-inoremap <Left> <NOP>
-inoremap <Right> <NOP>
 " graphical copypaste (requires xclip)
 com! -range Xc :silent :<line1>,<line2>w !xclip -selection clipboard -i
 ca xc Xc
