@@ -1,5 +1,6 @@
 syntax on
 filetype plugin indent on
+colorscheme slate
 set autoindent       " indent the same amount as the previous line on CR
 set cindent          " C-style indenting
 set nofoldenable     " disable folding
