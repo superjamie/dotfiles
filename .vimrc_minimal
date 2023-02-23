@@ -1,44 +1,72 @@
 syntax on
-set autoindent      " indent the same amount as the previous line on CR
-set hidden          " allow moving to another buffer without saving
-set hlsearch        " highlight search results
-set incsearch       " incremental search as you type
-set linebreak       " don't wrap text in the middle of a word
-set listchars=tab:>\ ,eol:$,trail:-,extends:>,precedes:<,nbsp:+ " based on vim-sensible
-set modeline        " enable modelines
-set number          " show line numbers
-set scrolloff=1     " number of lines to keep visible when scrolling
-set smartindent     " intelligent C indenting
-set splitbelow      " start splits below the current window
-set splitright      " start splits to the right of the current window
-set wildmenu
+filetype plugin indent on
+set autoindent       " indent the same amount as the previous line on CR
+set cindent          " C-style indenting
+set nofoldenable     " disable folding
+set hidden           " allow moving to another buffer without saving
+set hlsearch         " highlight search results
+set incsearch        " incremental search as you type
+set linebreak        " don't wrap text in the middle of a word
+set listchars=tab:>\ ,eol:$,trail:-,extends:>,precedes:<,nbsp:+ "
+set modeline         " https://vim.fandom.com/wiki/Modeline_magic
+set mouse=           " disable mouse
+set number           " show line numbers
+set relativenumber   " enable hybrid line numbers
+set scrolloff=1      " number of lines to keep visible when scrolling
+set smarttab         " tab on blank line inserts a shiftwidth, backspace deletes
+set splitbelow       " start splits below the current window
+set splitright       " start splits to the right of the current window
+set wildmenu         " command autocompletion menu (try :color <Tab> to see)
+
+set tabstop=8        " consider 4 spaces to be a tab
+set shiftwidth=8     " when < or > shifting, move to 4-space boundaries
+" when halfway thru spacing and you hit tab, end at (shiftwidth) gaps
+if has('softtabstop') | set softtabstop=-1 | endif
 
 """ statusline
 set laststatus=2    " always show the statusline
-set statusline=%<[%n]\ %t\ %h%m%r%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&ft}\ \|\ %2p%%\ \|\ %4l:%-2v\ "
+set statusline=%<[%n]\ %t\ %h%m%r%w%=%{&ff}\ \|\ %{''.(&fenc!=''?&fenc:&enc).''}\ \|\ %{&filetype!=#''?&filetype.'':'none'}\ \|\ %2p%%\ \|\ %3l:%-2v\ "
 
 " E492 Not an editor command
-ca Q q
+command Q q
 command W w
+"" disable command history (q:) and Ex mode (Q)
+nnoremap q: <Nop>
+nnoremap Q <nop>
 
-map q: <Nop>     " disable command history
-nnoremap Q <nop> " disable Ex mode
-
-" disable mouse
-autocmd BufEnter * set mouse=
-" remove highlights
-nnoremap <leader>h :nohl<CR>:match none<CR>:call clearmatches()<CR> :<Esc>
+" highlight cursor position
+nnoremap <silent> <leader>c :set cursorline!<CR>:set cursorcolumn!<CR>
+" remove search highlights by clearing last search pattern
+nnoremap <silent> <leader>h :let @/ = ""<cr>
 " toggle list characters
 nnoremap <leader>l :set list!<CR>:set list?<CR>
 " toggle line numbers
-nnoremap <leader>n :set number!<CR>:set number?<CR>
+nnoremap <leader>n :set relativenumber!<CR>:set number!<CR>
+" toggle relative line numbers
+nnoremap <silent> <leader><leader> :set relativenumber!<CR>
 " toggle paste mode
 nnoremap <leader>p :set paste!<CR>:set paste?<CR>
-" toggle relative line numbers
-nnoremap <leader>r :set relativenumber!<CR>:set relativenumber?<CR>
 " remove trailing whitespace through whole document
 nnoremap <leader>w :%s/\s\+$//<CR>:match<CR>:nohl<CR> :<Esc>
 
-" buffer nav
-noremap <C-h> :bprev<CR>
-noremap <C-l> :bnext<CR>
+"" buffers
+noremap <silent> <leader>b :buffers<cr>
+" close current buffer without closing split, switches to b# (previous buffer)
+nnoremap <silent> <leader>d :b#<bar>bd#<CR>
+" from vim-unimpaired
+noremap [b :bprev<CR>
+noremap ]b :bnext<CR>
+noremap [B :bfirst<CR>
+noremap ]B :blast<CR>
+
+"" suggested plugins
+" https://github.com/justinmk/vim-sneak - the missing motion for vim
+let g:sneak#label = 1
+" https://github.com/ervandew/supertab - turns tab into completion key
+" https://github.com/ap/vim-buftabline - view buffers in the tabline
+let g:buftabline_numbers = 1  " 0 = off. 1 = buffer number. 2 = ordinal number
+" https://github.com/jeffkreeftmeijer/vim-numbertoggle - smart relative/absolute line numbers
+" https://github.com/bronson/vim-trailing-whitespace - highlights trailing whitespace in red
+" https://github.com/takac/vim-hardtime - stop repeating keys like jjjjjj
+let g:hardtime_maxcount = 3
+let g:hardtime_default_on = 1
