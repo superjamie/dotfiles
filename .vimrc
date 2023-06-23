@@ -1,13 +1,14 @@
-""" vimrc v2023-02-18 - https://superjamie.github.io/
-" should work in NeoVim 0.8+ and Vim (recent-ish v8 or last v7 maybe?)
+""" vimrc v2023-06-32 - https://superjamie.github.io/
+" tested on Vim 9 only
 syntax on
 filetype plugin indent on
-
-""" theme - https://github.com/altercation/vim-colors-solarized
-set background=dark
-let g:solarized_italic = 0
-let g:solarized_bold = 0
-colorscheme solarized
+""" theme - https://draculatheme.com/vim
+let g:dracula_bold = 0
+let g:dracula_italic = 0
+let g:dracula_underline = 0
+let g:dracula_full_special_attrs_support = 1
+let g:dracula_colorterm = 0
+colorscheme dracula
 
 """ general
 set autoindent       " indent the same amount as the previous line on CR
@@ -26,6 +27,7 @@ set number           " show line numbers
 set relativenumber   " enable hybrid line numbers
 set scrolloff=1      " number of lines to keep visible when scrolling
 set title            " show title in console
+set ttimeoutlen=1    " timeout to consider Esc as Meta key
 set smarttab         " tab on blank line inserts a shiftwidth, backspace deletes
 set splitbelow       " start splits below the current window
 set splitright       " start splits to the right of the current window
@@ -37,12 +39,17 @@ set shiftwidth=4     " when < or > shifting, move to 4-space boundaries
 " when halfway thru spacing and you hit tab, end at (shiftwidth) gaps
 if has('softtabstop') | set softtabstop=-1 | endif
 
+" gvim
+if has("gui_running")
+  set guifont=PxPlus\ IBM\ VGA\ 8x16\ 12
+endif
+
 " put ~backups .swp .un~ in /tmp/%full%file%path instead of current directory
 set backupdir=/tmp//
 set directory=/tmp//
 set undodir=/tmp//
 
-""" neovim
+""" clipboard (vim-gtk3)
 " use system clipboard for all yank/delete/change/put operations
 if has("unnamedplus")
     set clipboard=unnamedplus
@@ -62,6 +69,7 @@ augroup configs
     autocmd FileType xml   setlocal   expandtab tabstop=2 shiftwidth=2 softtabstop=2
 augroup END
 
+" simpler version of https://github.com/farmergreg/vim-lastplace
 augroup jump_to_this_files_last_cursor_position
     autocmd!
     " exclude invalid, event handler, and commit messages
@@ -78,7 +86,7 @@ augroup reload_vimrc
 augroup END
 
 """ key remaps
-"" buffers
+" buffers
 noremap <silent> <leader>b :buffers<cr>
 " close current buffer without closing split, switches to b# (previous buffer)
 nnoremap <silent> <leader>d :b#<bar>bd#<CR>
@@ -88,18 +96,15 @@ noremap ]b :bnext<CR>
 noremap [B :bfirst<CR>
 noremap ]B :blast<CR>
 
-"" exit :terminal buffer insert mode with Esc
+" exit :terminal buffer insert mode with Esc
 tnoremap <Esc> <C-\><C-n>
 
-"" quickfix list
+" quickfix list
 noremap ]q :cnext<cr>
 noremap [q :cprev<cr>
-"" E492 Not an editor command
+" E492 Not an editor command
 command Q q
 command W w
-"" disable command history (q:) and Ex mode (Q)
-nnoremap q: <Nop>
-nnoremap Q <Nop>
 
 """ functions
 " remove trailing whitespace, return to last position
@@ -133,18 +138,13 @@ nnoremap <silent> <leader>h :let @/ = ""<cr>
 " toggle list characters
 nnoremap <leader>l :set list!<CR>:set list?<CR>
 " toggle line numbers
-nnoremap <leader>n :set relativenumber!<CR>:set number!<CR>
+nnoremap <silent> <leader>n :set relativenumber!<CR>:set number!<CR>
 " toggle relative line numbers
 nnoremap <silent> <leader><leader> :set relativenumber!<CR>
 " toggle paste mode
-nnoremap <Leader>p :set paste!<CR>:set paste?<CR>
-" close quickfix list
-nnoremap <leader>q :ccl<CR>
+nnoremap <leader>p :set paste!<CR>:set paste?<CR>
 " spell check
 nnoremap <leader>s :setlocal spell! spelllang=en_au<CR>:set spell?<CR>
-" open terminal in split
-nnoremap <leader>t :sp +term<cr>
-nnoremap <leader>T :vsp +term<cr>
 " reload vim config, repply filetype to the current file so 'augroup Filetype' runs again
 nnoremap <silent> <leader>v :source ~/.vimrc<CR>:exe ':set filetype='.&filetype<CR>
 " remove trailing whitespace, return cursor to current position
@@ -154,7 +154,7 @@ map <Leader>= mmgg=G`m
 
 """ plugins - complete list of plugins i use
 "" absolute essentials
-" https://github.com/altercation/vim-colors-solarized
+" https://github.com/dracula/vim
 " https://github.com/justinmk/vim-sneak
 "" nice to have
 " https://github.com/superjamie/zeroline.vim - my basic statusline
@@ -163,6 +163,7 @@ map <Leader>= mmgg=G`m
 " https://github.com/tpope/vim-fugitive - git integration as :Git or :G
 " https://github.com/jeffkreeftmeijer/vim-numbertoggle - smart relative/absolute line numbers
 " https://github.com/bronson/vim-trailing-whitespace - highlights trailing whitespace in red
+" https://github.com/Valloric/ListToggle - toggle quickfix and location lists with a key
 "" optional
 " https://github.com/takac/vim-hardtime - stop repeating keys like jjjjjj
 
@@ -180,25 +181,22 @@ map <Leader>= mmgg=G`m
 """ plugin settings
 "" https://github.com/justinmk/vim-sneak
 let g:sneak#label = 1
-highlight Sneak cterm=none ctermfg=White ctermbg=DarkMagenta
 
 "" https://github.com/ap/vim-buftabline
 let g:buftabline_numbers = 1  " 0 = off. 1 = buffer number. 2 = ordinal number
-" better look with solarized
-if &background ==# "dark"
-    hi BufTabLineActive  cterm=none ctermfg=Black  ctermbg=Yellow
-    hi BufTabLineCurrent cterm=none ctermfg=Black  ctermbg=Cyan
-    hi BufTabLineFill    cterm=none ctermfg=Yellow ctermbg=Black
-    hi BufTabLineHidden  cterm=none ctermfg=Yellow ctermbg=Black
-else
-    hi BufTabLineActive  cterm=none ctermfg=White  ctermbg=Cyan
-    hi BufTabLineCurrent cterm=none ctermfg=White  ctermbg=Green
-    hi BufTabLineHidden  cterm=none ctermfg=Yellow ctermbg=none
-    hi BufTabLineFill    cterm=none ctermfg=Yellow ctermbg=none
-endif
+hi BufTabLineActive  cterm=none ctermfg=253 ctermbg=235
+hi BufTabLineCurrent cterm=none ctermfg=253 ctermbg=238
+hi BufTabLineFill    cterm=none ctermfg=242 ctermbg=235
+hi BufTabLineHidden  cterm=none ctermfg=242 ctermbg=235
+hi StatusLineNC      cterm=none ctermfg=242 ctermbg=235
+
+"" https://github.com/Valloric/ListToggle
+let g:lt_location_list_toggle_map = '<leader>o'
+let g:lt_quickfix_list_toggle_map = '<leader>q'
 
 "" gtags-cscope
 if has("cscope")
+    set cscopequickfix=s-,g-,c-,e-,f-,a-
     " regenerate gtags
     function! Retag()
         !gtags
@@ -248,6 +246,7 @@ endif
 "                    \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
 "                    \ 'allowlist': ['c', 'cpp'],
 "                    \ 'initialization_options': {'cache': {'directory': expand('~/.cache/clangd') }},
+"                    \ 'allowlist': ['c', 'cpp'],
 "                    \ })
 "        autocmd FileType c setlocal omnifunc=lsp#complete
 "        autocmd FileType cpp setlocal omnifunc=lsp#complete
@@ -313,9 +312,54 @@ let g:rainbow_conf = { 'ctermfgs': [33, 166, 75, 141] }
 " 'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
 " 'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
 
+" cursor shape - https://stackoverflow.com/questions/42377945/vim-adding-cursorshape-support-over-tmux-ssh
+set t_SI=[6\ q
+set t_SR=[4\ q
+set t_EI=[2\ q
+" undercurl - https://github.com/vim/vim/issues/6174#issuecomment-636869793
+let &t_Cs = "\e[4:3m"
+let &t_Ce = "\e[4:0m"
+
+" https://honk.any-key.press/u/continue/h/2qS1KGX2z11bCCXFRn
+" grep for word under cursor, open results in quickfix list
+nnoremap <leader>g :execute
+          \ "grep! -R -I --exclude-dir=.git
+                       \ --exclude=*.orig
+                       \ --exclude=.*.swp
+                       \ --exclude=*.rej
+                       \ --exclude=*~ "
+                       \ . shellescape("\\<" . expand("<cword>") . "\\>")
+                       \ . " ."<cr>:copen<cr><cr>
+" termguicolors - https://stackoverflow.com/questions/62702766/termguicolors-in-vim-makes-everything-black-and-white
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
 """ legacy
 " graphical copypaste (requires xclip)
-com! -range Xc :silent :<line1>,<line2>w !xclip -selection clipboard -i
-ca xc Xc
-com! -range Xp :silent :r !xclip -selection clipboard -o
-ca xp Xp
+"com! -range Xc :silent :<line1>,<line2>w !xclip -selection clipboard -i
+"ca xc Xc
+"com! -range Xp :silent :r !xclip -selection clipboard -o
+"ca xp Xp
+
+" quickfix list
+"nnoremap <leader>q :cclose<CR>
+"nnoremap <leader>Q :copen<CR>
+
+""" theme - https://github.com/altercation/vim-colors-solarized
+"set background=dark
+"let g:solarized_italic = 0
+"let g:solarized_bold = 0
+"colorscheme solarized
+"highlight Sneak cterm=none ctermfg=White ctermbg=DarkMagenta
+"hi BufTabLineActive  cterm=none ctermfg=Black  ctermbg=Yellow
+"hi BufTabLineCurrent cterm=none ctermfg=Black  ctermbg=Cyan
+"hi BufTabLineFill    cterm=none ctermfg=Yellow ctermbg=Black
+"hi BufTabLineHidden  cterm=none ctermfg=Yellow ctermbg=Black
+
+""" disable command history (q:) and Ex mode (Q)
+"nnoremap q: <Nop>
+"nnoremap Q <Nop>
+
+" open terminal in split
+"nnoremap <leader>t :sp +term<cr>
+"nnoremap <leader>T :vsp +term<cr>
